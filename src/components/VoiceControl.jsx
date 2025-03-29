@@ -114,7 +114,30 @@ const VoiceControl = () => {
 	const [status, setStatus] = useState("Initializing...");
 	const [lastCommand, setLastCommand] = useState("");
 	const [isReading, setIsReading] = useState(false);
+	
+	const findClickableElement = (text) => {
+		// First try exact match
+		const elements = Array.from(
+			document.querySelectorAll("button, a, div[role='button'], [tabindex='0']")
+		);
+		const exactMatch = elements.find(
+			(el) => el.textContent.trim() === text.trim()
+		);
 
+		if (exactMatch) return exactMatch;
+
+		// If no exact match, try contains
+		return elements.find(
+			(el) =>
+				el.textContent.toLowerCase().includes(text.toLowerCase()) ||
+				el.getAttribute("title")?.toLowerCase().includes(text.toLowerCase()) ||
+				el
+					.getAttribute("aria-label")
+					?.toLowerCase()
+					.includes(text.toLowerCase())
+		);
+	};
+	
 	useEffect(() => {
 		const speak = async (text) => {
 			// Cancel any ongoing speech
